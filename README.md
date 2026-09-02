@@ -75,7 +75,7 @@
 ### 1. Clone Repositori
 
 ```bash
-git clone https://github.com/username/API-GOPAY-MERCHANT.git
+git clone https://github.com/warungerik/API-GOPAY-MERCHANT.git
 cd API-GOPAY-MERCHANT
 ```
 
