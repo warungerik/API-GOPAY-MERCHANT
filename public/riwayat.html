@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Riwayat Transaksi - WARUNGERIK Gateway</title>
+
+  <link rel="shortcut icon" href="/favicon.ico?v=2">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+  <link rel="icon" type="image/png" href="/logo.png?v=2">
+  <link rel="apple-touch-icon" href="/logo.png?v=2">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              cyan: '#00AED6',
+              cyanHover: '#0098BD',
+              dark: '#070B12',
+              card: '#0F172A',
+              accent: '#8B5CF6'
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <style>
+    html, body {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    html.dark body {
+      background-color: #070B12 !important;
+      color: #F9FAFB !important;
+    }
+    html:not(.dark) body {
+      background-color: #F8FAFC !important;
+      color: #0F172A !important;
+    }
+    .glass-card {
+      transition: all 0.3s ease;
+    }
+    html.dark .glass-card {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    html:not(.dark) .glass-card {
+      background: #FFFFFF;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid #E2E8F0;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    }
+    [v-cloak] { display: none !important; }
+  </style>
+</head>
+<body class="min-h-screen antialiased flex flex-col justify-between selection:bg-cyan-500 selection:text-white">
+
+  <div id="app" v-cloak class="w-full max-w-2xl mx-auto px-4 py-6 space-y-5">
+
+    <header class="glass-card rounded-2xl p-4 flex justify-between items-center relative z-30">
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-3">
+          <img src="/logo.png?v=2" alt="WARUNGERIK Logo" class="w-12 h-12 rounded-full object-cover border-2 border-cyan-500/40 shadow-lg shadow-cyan-500/20">
+          <div>
+            <h1 class="text-base font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">WARUNGERIK</h1>
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Payment Gateway Engine</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          @click.prevent="toggleTheme"
+          title="Ubah Tema Dark / Light"
+          class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 border border-slate-300 dark:border-white/10 transition-all flex items-center justify-center cursor-pointer select-none touch-manipulation">
+          <svg v-if="isDarkMode" class="w-4 h-4 text-amber-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg v-else class="w-4 h-4 text-slate-700 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+
+        <button
+          type="button"
+          @click.prevent="isMenuOpen = !isMenuOpen"
+          title="Menu Navigasi"
+          class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-white/10 transition-all flex items-center justify-center cursor-pointer select-none touch-manipulation">
+          <svg class="w-5 h-5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path v-if="!isMenuOpen" d="M4 6h16M4 12h16M4 18h16"/>
+            <path v-else d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div v-show="isMenuOpen" class="absolute top-full right-0 left-0 mt-2 p-3 glass-card rounded-2xl border border-slate-300 dark:border-white/10 shadow-2xl space-y-1.5 z-40">
+        <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <span>Dashboard Overview</span>
+        </a>
+        <a href="/cek-order" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Cek Status Order ID</span>
+        </a>
+        <a href="/riwayat" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-cyan-500 text-white font-extrabold text-xs shadow-md">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+          <span>Riwayat Transaksi</span>
+        </a>
+        <a href="/api-docs" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg>
+          <span>Dokumentasi & API Portal</span>
+        </a>
+      </div>
+    </header>
+
+    <nav class="flex gap-2 p-1.5 bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-white/5 rounded-2xl relative z-10 select-none">
+      <a href="/" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-white flex items-center justify-center gap-2 transition-all">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="/cek-order" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-white flex items-center justify-center gap-2 transition-all">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>Cek Order</span>
+      </a>
+      <a href="/riwayat" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-extrabold bg-cyan-500 text-white shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+        <span>Riwayat</span>
+      </a>
+    </nav>
+
+    <div class="glass-card rounded-2xl p-5 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Riwayat Transaksi</h3>
+        <button
+          type="button"
+          @click.prevent="refreshTransactions(1)"
+          class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all touch-manipulation cursor-pointer">
+          <svg class="w-3.5 h-3.5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span class="pointer-events-none">Refresh</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-4 gap-1.5 p-1 bg-slate-100 dark:bg-slate-950/80 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold">
+        <button
+          type="button"
+          @click.prevent="setFilter('')"
+          :class="filterStatus === '' ? 'bg-cyan-500 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+          class="py-1.5 rounded-lg transition-all touch-manipulation cursor-pointer">
+          Semua
+        </button>
+        <button
+          type="button"
+          @click.prevent="setFilter('PAID')"
+          :class="filterStatus === 'PAID' ? 'bg-cyan-500 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+          class="py-1.5 rounded-lg transition-all touch-manipulation cursor-pointer">
+          Lunas
+        </button>
+        <button
+          type="button"
+          @click.prevent="setFilter('PENDING')"
+          :class="filterStatus === 'PENDING' ? 'bg-cyan-500 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+          class="py-1.5 rounded-lg transition-all touch-manipulation cursor-pointer">
+          Pending
+        </button>
+        <button
+          type="button"
+          @click.prevent="setFilter('EXPIRED')"
+          :class="filterStatus === 'EXPIRED' ? 'bg-cyan-500 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+          class="py-1.5 rounded-lg transition-all touch-manipulation cursor-pointer">
+          Expired
+        </button>
+      </div>
+
+      <div v-if="isLoading" class="text-center py-8 text-xs text-slate-500 dark:text-slate-400">
+        Memuat data transaksi...
+      </div>
+
+      <div v-else-if="transactions.length === 0" class="text-center py-8 text-xs text-slate-500 dark:text-slate-400">
+        Belum ada transaksi di database.
+      </div>
+
+      <div v-else class="divide-y divide-slate-200 dark:divide-white/5">
+        <div v-for="tx in transactions" :key="tx.orderId" class="py-3 flex justify-between items-center">
+          <div class="space-y-0.5">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-900 dark:text-white font-mono">{{ maskOrderId(tx.orderId) }}</span>
+              <span
+                :class="{
+                  'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400': tx.status === 'PAID',
+                  'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400': tx.status === 'PENDING',
+                  'bg-rose-500/15 text-rose-600 dark:text-rose-400': tx.status === 'EXPIRED'
+                }"
+                class="px-2 py-0.5 rounded text-[9px] font-extrabold">
+                {{ tx.status === 'PAID' ? 'LUNAS' : tx.status }}
+              </span>
+            </div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400">
+              {{ tx.customerName || 'Customer' }} • {{ formatDate(tx.createdAt) }}
+            </div>
+          </div>
+
+          <div class="text-right font-mono font-extrabold text-xs text-cyan-600 dark:text-cyan-400">
+            Rp {{ formatRupiah(tx.totalAmount) }}
+          </div>
+        </div>
+      </div>
+
+      <div v-if="totalPages > 1" class="flex justify-between items-center pt-4 mt-2 border-t border-dashed border-slate-200 dark:border-white/10">
+        <button
+          type="button"
+          @click.prevent="changePage(currentPage - 1)"
+          :disabled="currentPage <= 1"
+          class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-800 dark:text-white font-bold text-xs rounded-lg transition-all touch-manipulation cursor-pointer">
+          Prev
+        </button>
+
+        <span class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">
+          Halaman {{ currentPage }} dari {{ totalPages }}
+        </span>
+
+        <button
+          type="button"
+          @click.prevent="changePage(currentPage + 1)"
+          :disabled="currentPage >= totalPages"
+          class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-800 dark:text-white font-bold text-xs rounded-lg transition-all touch-manipulation cursor-pointer">
+          Next
+        </button>
+      </div>
+    </div>
+
+    <footer class="text-center text-xs text-slate-500 mt-6 pb-4">
+      &copy; WARUNGERIK Payment Gateway System. All rights reserved.
+    </footer>
+
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

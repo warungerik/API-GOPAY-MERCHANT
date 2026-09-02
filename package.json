@@ -1,0 +1,43 @@
+{
+  "name": "pggopay-merchant",
+  "version": "1.0.0",
+  "description": "GoPay Merchant Payment Gateway Server for WARUNGERIK",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "nuxi generate",
+    "demo": "node demo.js",
+    "db:migrate": "node migrate_sqlite_to_supabase.js"
+  },
+  "keywords": [
+    "gopay",
+    "gobiz",
+    "qris",
+    "payment-gateway",
+    "merchant"
+  ],
+  "author": "WARUNGERIK",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.2",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^11.5.0",
+    "cors": "^2.8.5",
+    "crc": "^4.3.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "html2canvas": "^1.4.1",
+    "jsonwebtoken": "^9.0.3",
+    "moment-timezone": "^0.5.45",
+    "nodemailer": "^9.0.5",
+    "nuxt": "^4.5.2",
+    "pg": "^8.22.0",
+    "qrcode": "^1.5.4",
+    "sweetalert2": "^11.26.25",
+    "ws": "^8.18.1"
+  }
+}

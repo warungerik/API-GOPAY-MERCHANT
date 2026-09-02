@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>WARUNGERIK - API Portal & Dokumentasi Integrasi</title>
+
+  <link rel="shortcut icon" href="/favicon.ico?v=2">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+  <link rel="icon" type="image/png" href="/logo.png?v=2">
+  <link rel="apple-touch-icon" href="/logo.png?v=2">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              cyan: '#00AED6',
+              cyanHover: '#0098BD',
+              dark: '#070B12',
+              card: '#0F172A',
+              accent: '#8B5CF6'
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <style>
+    html,
+    body {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    html.dark body {
+      background-color: #070B12 !important;
+      color: #F9FAFB !important;
+    }
+
+    html:not(.dark) body {
+      background-color: #F8FAFC !important;
+      color: #0F172A !important;
+    }
+
+    .glass-card {
+      transition: all 0.3s ease;
+    }
+
+    html.dark .glass-card {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    html:not(.dark) .glass-card {
+      background: #FFFFFF;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid #E2E8F0;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    [v-cloak] {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen antialiased flex flex-col justify-between selection:bg-cyan-500 selection:text-white">
+
+  <div id="app" v-cloak class="w-full max-w-3xl mx-auto px-4 py-6 space-y-5">
+
+    <header class="glass-card rounded-2xl p-4 flex justify-between items-center relative z-30">
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-3 group">
+          <img src="/logo.png?v=2" alt="WARUNGERIK Logo"
+            class="w-12 h-12 rounded-full object-cover border-2 border-cyan-500/40 shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+          <div>
+            <h1 class="text-base font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">WARUNGERIK
+            </h1>
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Developer API Portal</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button type="button" @click.prevent="toggleTheme" title="Ubah Tema Dark / Light"
+          class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 border border-slate-300 dark:border-white/10 transition-all flex items-center justify-center cursor-pointer select-none touch-manipulation">
+          <svg v-if="isDarkMode" class="w-4 h-4 text-amber-400 pointer-events-none" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+          <svg v-else class="w-4 h-4 text-slate-700 pointer-events-none" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </button>
+
+        <button type="button" @click.prevent="isMenuOpen = !isMenuOpen" title="Menu Navigasi"
+          class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-white/10 transition-all flex items-center justify-center cursor-pointer select-none touch-manipulation">
+          <svg class="w-5 h-5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path v-if="!isMenuOpen" d="M4 6h16M4 12h16M4 18h16"/>
+            <path v-else d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div v-show="isMenuOpen" class="absolute top-full right-0 left-0 mt-2 p-3 glass-card rounded-2xl border border-slate-300 dark:border-white/10 shadow-2xl space-y-1.5 z-40">
+        <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <span>Dashboard Overview</span>
+        </a>
+        <a href="/cek-order" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Cek Status Order ID</span>
+        </a>
+        <a href="/riwayat" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+          <span>Riwayat Transaksi</span>
+        </a>
+        <a href="/api-docs" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-cyan-500 text-white font-extrabold text-xs shadow-md">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg>
+          <span>Dokumentasi & API Portal</span>
+        </a>
+      </div>
+    </header>
+
+    <div class="glass-card rounded-2xl p-5">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <span>Autentikasi Header API Key</span>
+        </h2>
+        <span
+          class="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-[10px] font-bold">X-API-KEY</span>
+      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
+        Setiap permintaan pembuatan order harus melampirkan header <code
+          class="font-mono text-cyan-600 dark:text-cyan-400 font-bold bg-cyan-500/10 px-1.5 py-0.5 rounded">X-API-KEY</code>
+        dari server Anda.
+      </p>
+
+      <div
+        class="flex items-center justify-between bg-slate-100 dark:bg-slate-950/80 border border-slate-200 dark:border-white/10 p-3 rounded-xl font-mono text-xs text-slate-900 dark:text-white">
+        <span>X-API-KEY: <strong class="text-cyan-600 dark:text-cyan-400">YOUR_API_SECRET_KEY</strong></span>
+        <button @click="copyText('YOUR_API_SECRET_KEY', 'key')"
+          class="px-2.5 py-1 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-[11px] font-sans font-bold rounded-lg transition-all">
+          {{ copiedType === 'key' ? 'Tersalin!' : 'Copy' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="glass-card rounded-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span
+            class="px-2.5 py-1 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-extrabold">POST</span>
+          <span class="text-sm font-extrabold text-slate-900 dark:text-white font-mono">/api/checkout</span>
+        </div>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Buat Transaksi Baru</span>
+      </div>
+
+      <div
+        class="flex gap-1.5 p-1 bg-slate-100 dark:bg-slate-950/80 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold">
+        <button v-for="lang in ['php', 'curl', 'nodejs', 'python']" :key="lang" @click="activeLang = lang"
+          :class="activeLang === lang ? 'bg-cyan-500 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+          class="flex-1 py-1.5 rounded-lg uppercase transition-all">
+          {{ lang === 'nodejs' ? 'Node.js' : lang }}
+        </button>
+      </div>
+
+      <div class="relative group">
+        <pre
+          class="bg-slate-950 text-slate-200 p-4 rounded-xl font-mono text-[11px] leading-relaxed overflow-x-auto border border-white/10"><code>{{ snippets[activeLang] }}</code></pre>
+
+        <button @click="copyText(snippets[activeLang], 'code')"
+          class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-extrabold rounded-md shadow-md border border-white/10 transition-all">
+          {{ copiedType === 'code' ? 'Tersalin!' : 'Copy Code' }}
+        </button>
+      </div>
+
+      <div>
+        <span class="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Response JSON (200 OK):</span>
+        <pre
+          class="bg-slate-950 text-emerald-400 p-4 rounded-xl font-mono text-[11px] leading-relaxed overflow-x-auto border border-white/10"><code>{
+  "success": true,
+  "message": "Invoice QRIS berhasil diterbitkan.",
+  "data": {
+    "orderId": "INV-1702345678",
+    "merchantId": "G053499515",
+    "baseAmount": 50000,
+    "uniqueCode": 37,
+    "feeType": "PERCENTAGE",
+    "feePercent": 0.7,
+    "feeAmount": 350,
+    "feeBearer": "CUSTOMER",
+    "totalAmount": 50387,
+    "netAmount": 50000,
+    "customerName": "Budi Santoso",
+    "note": "Pembelian Produk Digital Premium",
+    "status": "PENDING",
+    "paymentUrl": "https://pg.warungerik.com/pay/INV-1702345678",
+    "qrCodeDataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
+    "dynamicQris": "00020101021126610014COM.GO-JEK.WWW01189360091430534995150210G0534995150303UMI...",
+    "createdAt": "2026-08-07T18:50:00.000Z",
+    "expiredAt": "2026-08-07T19:05:00.000Z"
+  }
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="glass-card rounded-2xl p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span
+            class="px-2.5 py-1 rounded-md bg-cyan-500/15 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 text-xs font-mono font-extrabold">GET</span>
+          <span class="text-sm font-extrabold text-slate-900 dark:text-white font-mono">/api/v1/order/:orderId</span>
+        </div>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Cek Status Realtime</span>
+      </div>
+
+      <p class="text-xs text-slate-500 dark:text-slate-400">
+        Digunakan oleh sistem web Anda untuk polling atau verifikasi status settlement pembayaran QRIS.
+      </p>
+
+      <pre
+        class="bg-slate-950 text-slate-200 p-4 rounded-xl font-mono text-[11px] leading-relaxed overflow-x-auto border border-white/10"><code>{
+  "success": true,
+  "data": {
+    "orderId": "INV-1702345678",
+    "status": "PAID",
+    "baseAmount": 50000,
+    "feeAmount": 350,
+    "totalAmount": 50387,
+    "netAmount": 50000,
+    "customerName": "Budi Santoso",
+    "txId": "TXN-QRIS-993847102",
+    "paidAt": "2026-08-07T18:52:10.000Z",
+    "createdAt": "2026-08-07T18:50:00.000Z"
+  }
+}</code></pre>
+    </div>
+
+    <div class="glass-card rounded-2xl p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span
+            class="px-2.5 py-1 rounded-md bg-cyan-500/15 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 text-xs font-mono font-extrabold">GET</span>
+          <span class="text-sm font-extrabold text-slate-900 dark:text-white font-mono">/api/transactions</span>
+        </div>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Daftar Transaksi</span>
+      </div>
+
+      <p class="text-xs text-slate-500 dark:text-slate-400">
+        Parameter query opsional: <code
+          class="font-mono text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 px-1 py-0.5 rounded">q</code> (kata kunci),
+        <code class="font-mono text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 px-1 py-0.5 rounded">status</code>
+        (PAID/PENDING/EXPIRED), <code
+          class="font-mono text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 px-1 py-0.5 rounded">limit</code> (default
+        50), <code class="font-mono text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 px-1 py-0.5 rounded">offset</code>.
+      </p>
+    </div>
+
+    <footer class="text-center text-xs text-slate-500 mt-6 pb-4">
+      &copy; WARUNGERIK Payment Gateway System. All rights reserved.
+    </footer>
+
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          isDarkMode: localStorage.getItem('theme') !== 'light',
+          isMenuOpen: false,
+          activeLang: 'php',
+          copiedType: null,
+          snippets: {
+            php: `<?php
+$url = 'https://pg.warungerik.com/api/checkout';
+$apiKey = 'YOUR_API_SECRET_KEY';
+
+$data = [
+    'orderId' => 'INV-' . time(),
+    'amount' => 50000,
+    'customerName' => 'Budi Santoso',
+    'note' => 'Pembelian Produk #1092'
+];
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Content-Type: application/json',
+    'X-API-KEY: ' . $apiKey
+]);
+
+$response = json_decode(curl_exec($ch), true);
+curl_close($ch);
+
+if (!empty($response['success'])) {
+    header('Location: ' . $response['data']['paymentUrl']);
+    exit();
+}`,
+            curl: `curl -X POST https://pg.warungerik.com/api/checkout \\
+  -H "Content-Type: application/json" \\
+  -H "X-API-KEY: YOUR_API_SECRET_KEY" \\
+  -d '{
+    "orderId": "INV-2026-1092",
+    "amount": 50000,
+    "customerName": "Budi Santoso",
+    "note": "Pembelian Produk #1092"
+  }'`,
+            nodejs: `const response = await fetch('https://pg.warungerik.com/api/checkout', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-API-KEY': 'YOUR_API_SECRET_KEY'
+  },
+  body: JSON.stringify({
+    orderId: 'INV-2026-1092',
+    amount: 50000,
+    customerName: 'Budi Santoso',
+    note: 'Pembelian Produk #1092'
+  })
+});
+
+const res = await response.json();
+if (res.success) {
+  window.location.href = res.data.paymentUrl;
+}`,
+            python: `import requests
+
+url = "https://pg.warungerik.com/api/checkout"
+headers = {
+    "Content-Type": "application/json",
+    "X-API-KEY": "YOUR_API_SECRET_KEY"
+}
+payload = {
+    "orderId": "INV-2026-1092",
+    "amount": 50000,
+    "customerName": "Budi Santoso",
+    "note": "Pembelian Produk #1092"
+}
+
+response = requests.post(url, json=payload, headers=headers)
+data = response.json()
+
+if data.get("success"):
+    print("Payment URL:", data["data"]["paymentUrl"])`
+          }
+        };
+      },
+      mounted() {
+        this.applyTheme();
+      },
+      methods: {
+        applyTheme() {
+          if (this.isDarkMode) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+          }
+        },
+        toggleTheme() {
+          this.isDarkMode = !this.isDarkMode;
+          this.applyTheme();
+        },
+        copyText(text, type) {
+          navigator.clipboard.writeText(text);
+          this.copiedType = type;
+          setTimeout(() => {
+            if (this.copiedType === type) this.copiedType = null;
+          }, 2000);
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+
+</html>
