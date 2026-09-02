@@ -156,9 +156,9 @@ npm start
 
 ---
 
-## 🔌 Integrasi API (Merchant API Endpoint)
+##  Integrasi API (Merchant API Endpoint)
 
-### 📤 1. Request Checkout / Pembayaran
+###  1. Request Checkout / Pembayaran
 
 - **Endpoint**: `POST /api/checkout`
 - **Header**: `x-api-key: YOUR_MERCHANT_API_KEY`
